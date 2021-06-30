@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Document(collection = "RequestStatus")
+@Document(collection = "DistrictRequestStatus")
 @NoArgsConstructor
 @Schema(description = "Model for Status of a Order Request for Ration by State")
 public class RequestStatus {

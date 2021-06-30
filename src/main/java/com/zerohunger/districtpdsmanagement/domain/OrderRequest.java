@@ -9,13 +9,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Document(collection = "OrderRequest")
+@Document(collection = "DistrictOrderRequest")
 @NoArgsConstructor
 public class OrderRequest {
 
 	@Id
 	private String id;
-	private String requestingStateName;
+	private String requestingDistrictName;
+	private String stateName;
 	private String rawMaterialName;
 	private Double quantity;
 	private String unitsRequested;
@@ -27,10 +28,11 @@ public class OrderRequest {
 	//@LastModifiedDate 
 	private Date modifiedOn;
 	
-	public OrderRequest(String requestingStateName, String rawMaterialName, Double quantity, String unitsRequested,
+	public OrderRequest(String requestingDistrictName, String stateName, String rawMaterialName, Double quantity, String unitsRequested,
 			Boolean isActive, Date createdOn, Date modifiedOn) {
 		super();
-		this.requestingStateName = requestingStateName;
+		this.requestingDistrictName = requestingDistrictName;
+		this.stateName = stateName;
 		this.rawMaterialName = rawMaterialName;
 		this.quantity = quantity;
 		this.unitsRequested = unitsRequested;
