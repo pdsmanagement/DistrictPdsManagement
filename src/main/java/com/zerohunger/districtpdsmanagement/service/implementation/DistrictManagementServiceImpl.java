@@ -1,7 +1,7 @@
 package com.zerohunger.districtpdsmanagement.service.implementation;
 
-import com.zerohunger.districtpdsmanagement.domain.District;
-import com.zerohunger.districtpdsmanagement.domain.DistrictAvailability;
+import com.zerohunger.districtpdsmanagement.domain.GovBody;
+import com.zerohunger.districtpdsmanagement.domain.GovBodyRawMaterialAvailability;
 import com.zerohunger.districtpdsmanagement.domain.OrderGrant;
 import com.zerohunger.districtpdsmanagement.domain.OrderRequest;
 import com.zerohunger.districtpdsmanagement.domain.RequestStatus;
@@ -14,13 +14,13 @@ import reactor.core.publisher.Mono;
 public class DistrictManagementServiceImpl implements DistrictManagementService{
 
     @Override
-    public Mono<DistrictAvailability> getRationAvailability(String districtName) {
+    public Mono<GovBodyRawMaterialAvailability> getRationAvailability(String districtName) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Mono<District> getDistrictCapacity(String districtName) {
+    public Mono<GovBody> getDistrictCapacity(String districtName) {
         // TODO Auto-generated method stub
         return null;
     }

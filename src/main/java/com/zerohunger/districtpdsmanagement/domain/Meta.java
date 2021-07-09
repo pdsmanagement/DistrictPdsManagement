@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
 
 @Data
-@Document(collection = "DistrictMeta")
+@Document(collection = "Meta")
 public class Meta {
 	
 	@Id

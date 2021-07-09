@@ -1,7 +1,7 @@
 package com.zerohunger.districtpdsmanagement.service;
 
-import com.zerohunger.districtpdsmanagement.domain.District;
-import com.zerohunger.districtpdsmanagement.domain.DistrictAvailability;
+import com.zerohunger.districtpdsmanagement.domain.GovBody;
+import com.zerohunger.districtpdsmanagement.domain.GovBodyRawMaterialAvailability;
 import com.zerohunger.districtpdsmanagement.domain.OrderGrant;
 import com.zerohunger.districtpdsmanagement.domain.OrderRequest;
 import com.zerohunger.districtpdsmanagement.domain.RequestStatus;
@@ -12,9 +12,9 @@ import reactor.core.publisher.Mono;
 
 public interface DistrictManagementService {
 
-    Mono<DistrictAvailability> getRationAvailability(String districtName);
+    Mono<GovBodyRawMaterialAvailability> getRationAvailability(String districtName);
 
-    Mono<District> getDistrictCapacity(String districtName);
+    Mono<GovBody> getDistrictCapacity(String districtName);
 
     Mono<OrderRequest> requestforRation(OrderRequestService orderRequest);
 
