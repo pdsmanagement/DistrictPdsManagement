@@ -9,14 +9,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Document(collection = "DistrictOrderRequest")
+@Document(collection = "OrderRequest")
 @NoArgsConstructor
 public class OrderRequest {
 
 	@Id
 	private String id;
 	private String requestingDistrictName;
-	private String stateName;
+	private String requestingStateName;
 	private String rawMaterialName;
 	private Double quantity;
 	private String unitsRequested;
@@ -28,17 +28,29 @@ public class OrderRequest {
 	//@LastModifiedDate 
 	private Date modifiedOn;
 	
-	public OrderRequest(String requestingDistrictName, String stateName, String rawMaterialName, Double quantity, String unitsRequested,
+	public OrderRequest(String requestingStateName, String rawMaterialName, Double quantity, String unitsRequested,
 			Boolean isActive, Date createdOn, Date modifiedOn) {
 		super();
-		this.requestingDistrictName = requestingDistrictName;
-		this.stateName = stateName;
+		this.requestingStateName = requestingStateName;
 		this.rawMaterialName = rawMaterialName;
 		this.quantity = quantity;
 		this.unitsRequested = unitsRequested;
 		this.isActive = isActive;
 		this.createdOn = createdOn;
 		this.modifiedOn = modifiedOn;
+	}
+
+	//constructor with all fields
+	public OrderRequest(String requestingStateName, String rawMaterialName, Double quantity, String unitsRequested,	Boolean isActive, Date createdOn, Date modifiedOn, String requestingDistrictName) {
+		super();
+		this.requestingStateName = requestingStateName;
+		this.rawMaterialName = rawMaterialName;
+		this.quantity = quantity;
+		this.unitsRequested = unitsRequested;
+		this.isActive = isActive;
+		this.createdOn = createdOn;
+		this.modifiedOn = modifiedOn;
+		this.requestingDistrictName = requestingDistrictName;
 	}
 	
 }

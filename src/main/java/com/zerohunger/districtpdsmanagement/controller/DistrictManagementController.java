@@ -1,7 +1,7 @@
 package com.zerohunger.districtpdsmanagement.controller;
 
-import com.zerohunger.districtpdsmanagement.domain.District;
-import com.zerohunger.districtpdsmanagement.domain.DistrictAvailability;
+import com.zerohunger.districtpdsmanagement.domain.GovBody;
+import com.zerohunger.districtpdsmanagement.domain.GovBodyRawMaterialAvailability;
 import com.zerohunger.districtpdsmanagement.domain.OrderGrant;
 import com.zerohunger.districtpdsmanagement.domain.OrderRequest;
 import com.zerohunger.districtpdsmanagement.domain.RequestStatus;
@@ -41,13 +41,13 @@ public class DistrictManagementController {
 			@ApiResponse(responseCode = "400", description = "Bad Request"),
 			@ApiResponse(responseCode = "500", description = "Internal Server Error")
 	})
-	public Mono<ResponseEntity<DistrictAvailability>> getRationAvailability(@RequestParam String districtName) {
+	public Mono<ResponseEntity<GovBodyRawMaterialAvailability>> getRationAvailability(@RequestParam String districtName) {
 		if (districtName != null) {
 			log.info("Ration Availability Controller Started !");
 			return districtManagementService.getRationAvailability(districtName).map(District -> ResponseEntity.ok(District))
 					.defaultIfEmpty(ResponseEntity.notFound().build());
 		} else
-			return Mono.just(new ResponseEntity<>(new DistrictAvailability(), HttpStatus.BAD_REQUEST));
+			return Mono.just(new ResponseEntity<>(new GovBodyRawMaterialAvailability(), HttpStatus.BAD_REQUEST));
 	}
 
 	@GetMapping("/ration-capacity")
@@ -58,12 +58,12 @@ public class DistrictManagementController {
 			@ApiResponse(responseCode = "400", description = "Bad Request"),
 			@ApiResponse(responseCode = "500", description = "Internal Server Error")
 	})
-	public Mono<ResponseEntity<District>> getDistrictCapacity(@RequestParam String districtName) {
+	public Mono<ResponseEntity<GovBody>> getDistrictCapacity(@RequestParam String districtName) {
 		if (districtName != null) {
 			return districtManagementService.getDistrictCapacity(districtName).map(District -> ResponseEntity.ok(District))
 					.defaultIfEmpty(ResponseEntity.notFound().build());
 		} else
-			return Mono.just(new ResponseEntity<>(new District(), HttpStatus.BAD_REQUEST));
+			return Mono.just(new ResponseEntity<>(new GovBody(), HttpStatus.BAD_REQUEST));
 	}
 
 	@PostMapping("/ration-request")

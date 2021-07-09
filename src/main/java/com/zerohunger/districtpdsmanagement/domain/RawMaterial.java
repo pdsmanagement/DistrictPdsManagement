@@ -8,7 +8,7 @@ import com.zerohunger.districtpdsmanagement.constant.RationItem;
 import lombok.Data;
 
 @Data
-@Document(collection = "DistrictRawMaterial")
+@Document(collection = "RawMaterial")
 public class RawMaterial {
 
 	@Id
