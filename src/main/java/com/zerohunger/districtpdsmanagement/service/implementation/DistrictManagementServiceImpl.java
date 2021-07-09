@@ -9,13 +9,17 @@ import com.zerohunger.districtpdsmanagement.dto.OrderGrantService;
 import com.zerohunger.districtpdsmanagement.dto.OrderRequestService;
 import com.zerohunger.districtpdsmanagement.service.DistrictManagementService;
 
+import org.springframework.stereotype.Service;
+
 import reactor.core.publisher.Mono;
 
+@Service
 public class DistrictManagementServiceImpl implements DistrictManagementService{
 
     @Override
     public Mono<GovBodyRawMaterialAvailability> getRationAvailability(String districtName) {
-        // TODO Auto-generated method stub
+        // get data from database using district name
+
         return null;
     }
 
