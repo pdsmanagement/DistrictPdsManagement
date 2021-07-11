@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DistrictAvailabilityRepository extends MongoRepository<GovBodyRawMaterialAvailability, String> {
 
-	GovBodyRawMaterialAvailability findOneByStateName(final String stateName);
+	GovBodyRawMaterialAvailability findOneByDistrictName(final String stateName);
 	
 }
