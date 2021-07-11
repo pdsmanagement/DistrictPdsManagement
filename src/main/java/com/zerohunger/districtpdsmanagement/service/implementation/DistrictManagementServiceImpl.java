@@ -113,27 +113,37 @@ public class DistrictManagementServiceImpl implements DistrictManagementService{
     public Mono<OrderGrant> grantOrderNote(OrderGrantService grantOrder) {
         log.info(String.format("Granting Order Note for District: %s", grantOrder.getGrantingDistrictName()));
         DistrictInCamelCase = StringUtils.capitalize(grantOrder.getGrantingDistrictName());
-        // get data from database using district name
+        // check district name is present is database or not
         Optional<GovBody> data = Optional.ofNullable(districtRepository.findOneByDistrictName(DistrictInCamelCase));
-        if(data.isPresent()){
+        // check if request is present in database
+        Optional<OrderRequest> relatedOrderRequest = orderRequestRepository.findById(grantOrder.getRequestId());
+        if(data.isPresent() || relatedOrderRequest.isPresent()){
+            // check if granting district name and requesting district name belong to same state
+            if(grantOrder.getGrantingStateName().equals(relatedOrderRequest.get().getRequestingStateName())){
             // create new order grant
-            Date date = new Date();
-            OrderGrant orderGrantEntity = new OrderGrant(grantOrder.getGrantingStateName() , grantOrder.getRequestId(), grantOrder.getQuantityGranted(), date, date, grantOrder.getGrantingDistrictName());
-            // save new order grant
-            Optional<OrderGrant> dbRes = Optional.ofNullable(orderGrantRepository.save(orderGrantEntity));
-            if(dbRes.isPresent()){
-                log.info("Order Grant Service Completed !");
-                updateOrderRequestAndRequestStatusOnGrantOrderNote(dbRes.get());
-                return Mono.just(dbRes.get());
+                Date date = new Date();
+                OrderGrant orderGrantEntity = new OrderGrant(grantOrder.getGrantingStateName() , grantOrder.getRequestId(), grantOrder.getQuantityGranted(), date, date, grantOrder.getGrantingDistrictName());
+                // save new order grant
+                Optional<OrderGrant> dbRes = Optional.ofNullable(orderGrantRepository.save(orderGrantEntity));
+                if(dbRes.isPresent()){
+                    log.info("Order Grant Service Completed !");
+                    updateOrderRequestAndRequestStatusOnGrantOrderNote(dbRes.get());
+                    return Mono.just(dbRes.get());
+                }
+                else{
+                    log.error("Order Grant Service Failed !");
+                    return Mono.error(new OrderGrantSaveError("Order Grant Service Error ! - Order Grant Save Failed"));
+                }
             }
             else{
-                log.error("Order Grant Service Failed !");
-                return Mono.error(new OrderGrantSaveError("Order Grant Service Error ! - Order Grant Save Failed"));
+                log.error("Order Grant Service Failed ! Requesting and Granting Districts do not belong to same State "+grantOrder.getGrantingStateName());
+                return Mono.error(new OrderGrantSaveError("Order Grant Service Error ! - Requesting and Granting Districts do not belong to same State"));
             }
-        }
+        }   
         else{
             log.error("Ration Grant Service Failed ! District Name not Found "+grantOrder.getGrantingDistrictName());
-            return Mono.error(new EntityNotFoundException("District Not Found "+grantOrder.getGrantingDistrictName()));
+            return Mono.error(new EntityNotFoundException("District "+grantOrder.getGrantingDistrictName()+" or Request ID "+grantOrder.getRequestId()+" Not Found"));
+
         }
     }
 
