@@ -40,7 +40,7 @@ public class OrderRequest {
 		this.modifiedOn = modifiedOn;
 	}
 
-	//constructor with all fields
+	//constructor with all fields except id
 	public OrderRequest(String requestingStateName, String rawMaterialName, Double quantity, String unitsRequested,	Boolean isActive, Date createdOn, Date modifiedOn, String requestingDistrictName) {
 		super();
 		this.requestingStateName = requestingStateName;
