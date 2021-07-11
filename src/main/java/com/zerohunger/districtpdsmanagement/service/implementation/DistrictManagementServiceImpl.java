@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @Slf4j
-public class DistrictManagementServiceImpl implements DistrictManagementService{
+public class DistrictManagementServiceImpl implements DistrictManagementService {
 
     @Autowired
     private DistrictAvailabilityRepository districtAvailabilityRepository;
@@ -54,14 +54,14 @@ public class DistrictManagementServiceImpl implements DistrictManagementService{
         // get data from database using district name
         log.info(String.format("Getting Ration Availability for District: %s", districtName));
         DistrictInCamelCase = StringUtils.capitalize(districtName);
-        Optional<GovBodyRawMaterialAvailability> data = Optional.ofNullable(districtAvailabilityRepository.findOneByDistrictName(DistrictInCamelCase));
-        if(data.isPresent()){
+        Optional<GovBodyRawMaterialAvailability> data = Optional
+                .ofNullable(districtAvailabilityRepository.findOneByDistrictName(DistrictInCamelCase));
+        if (data.isPresent()) {
             log.info("Ration Availability Service Completed !");
             return Mono.just(data.get());
-        }
-        else{
+        } else {
             log.error("Ration Availability Service Failed !");
-            return Mono.error(new EntityNotFoundException("District Not Found "+districtName));
+            return Mono.error(new EntityNotFoundException("District Not Found " + districtName));
         }
     }
 
@@ -70,13 +70,12 @@ public class DistrictManagementServiceImpl implements DistrictManagementService{
         log.info(String.format("Getting Ration Capacity for District: %s", districtName));
         DistrictInCamelCase = StringUtils.capitalize(districtName);
         Optional<GovBody> data = Optional.ofNullable(districtRepository.findOneByDistrictName(DistrictInCamelCase));
-        if(data.isPresent()){
+        if (data.isPresent()) {
             log.info("Ration Capacity of District Service Completed !");
             return Mono.just(data.get());
-        }
-        else{
+        } else {
             log.error("Ration Capacity of District Service Failed !");
-            return Mono.error(new EntityNotFoundException("District Not Found "+districtName));
+            return Mono.error(new EntityNotFoundException("District Not Found " + districtName));
         }
     }
 
@@ -86,26 +85,30 @@ public class DistrictManagementServiceImpl implements DistrictManagementService{
         DistrictInCamelCase = StringUtils.capitalize(orderRequest.getRequestingDistrictName());
         // check district name is present is database or not
         Optional<GovBody> data = Optional.ofNullable(districtRepository.findOneByDistrictName(DistrictInCamelCase));
-        if(data.isPresent()){
+        if (data.isPresent()) {
             // create new order request
             Date date = new Date();
-            OrderRequest orderRequestEntity = new OrderRequest(orderRequest.getRequestingStateName(), orderRequest.getRawMaterialName(), orderRequest.getQuantity(), orderRequest.getUnits(), true, date, date, orderRequest.getRequestingDistrictName());
+            OrderRequest orderRequestEntity = new OrderRequest(orderRequest.getRequestingStateName(),
+                    orderRequest.getRawMaterialName(), orderRequest.getQuantity(), orderRequest.getUnits(), true, date,
+                    date, orderRequest.getRequestingDistrictName());
             // save new order request
             Optional<OrderRequest> dbRes = Optional.ofNullable(orderRequestRepository.save(orderRequestEntity));
-            if(dbRes.isPresent()){
+            if (dbRes.isPresent()) {
                 log.info("Ration Request Service Completed !");
                 // update request status to pending
-                requestStatusRepository.save(new RequestStatus(dbRes.get().getId(), OrderRequestStatus.PENDING,0.0, dbRes.get().getQuantity()));
+                requestStatusRepository.save(new RequestStatus(dbRes.get().getId(), OrderRequestStatus.PENDING, 0.0,
+                        dbRes.get().getQuantity()));
                 return Mono.just(dbRes.get());
-            }
-            else{
+            } else {
                 log.error("Ration Request Service Failed !");
-                return Mono.error(new OrderRequestSaveError("Request for Ration Service Error ! - Order Request Save Failed"));
+                return Mono.error(
+                        new OrderRequestSaveError("Request for Ration Service Error ! - Order Request Save Failed"));
             }
-        }
-        else{
-            log.error("Ration Request Service Failed ! District Name not Found "+orderRequest.getRequestingDistrictName());
-            return Mono.error(new EntityNotFoundException("District Not Found "+orderRequest.getRequestingDistrictName()));
+        } else {
+            log.error("Ration Request Service Failed ! District Name not Found "
+                    + orderRequest.getRequestingDistrictName());
+            return Mono.error(
+                    new EntityNotFoundException("District Not Found " + orderRequest.getRequestingDistrictName()));
         }
     }
 
@@ -117,32 +120,35 @@ public class DistrictManagementServiceImpl implements DistrictManagementService{
         Optional<GovBody> data = Optional.ofNullable(districtRepository.findOneByDistrictName(DistrictInCamelCase));
         // check if request is present in database
         Optional<OrderRequest> relatedOrderRequest = orderRequestRepository.findById(grantOrder.getRequestId());
-        if(data.isPresent() || relatedOrderRequest.isPresent()){
-            // check if granting district name and requesting district name belong to same state
-            if(grantOrder.getGrantingStateName().equals(relatedOrderRequest.get().getRequestingStateName())){
-            // create new order grant
+        if (data.isPresent() || relatedOrderRequest.isPresent()) {
+            // check if granting district name and requesting district name belong to same
+            // state
+            if (grantOrder.getGrantingStateName().equals(relatedOrderRequest.get().getRequestingStateName())) {
+                // create new order grant
                 Date date = new Date();
-                OrderGrant orderGrantEntity = new OrderGrant(grantOrder.getGrantingStateName() , grantOrder.getRequestId(), grantOrder.getQuantityGranted(), date, date, grantOrder.getGrantingDistrictName());
+                OrderGrant orderGrantEntity = new OrderGrant(grantOrder.getGrantingStateName(),
+                        grantOrder.getRequestId(), grantOrder.getQuantityGranted(), date, date,
+                        grantOrder.getGrantingDistrictName());
                 // save new order grant
                 Optional<OrderGrant> dbRes = Optional.ofNullable(orderGrantRepository.save(orderGrantEntity));
-                if(dbRes.isPresent()){
+                if (dbRes.isPresent()) {
                     log.info("Order Grant Service Completed !");
-                    updateOrderRequestAndRequestStatusOnGrantOrderNote(dbRes.get());
+                    updateOrderRequestAndRequestStatusOnGrantOrderNote(dbRes.get(), relatedOrderRequest.get());
                     return Mono.just(dbRes.get());
-                }
-                else{
+                } else {
                     log.error("Order Grant Service Failed !");
                     return Mono.error(new OrderGrantSaveError("Order Grant Service Error ! - Order Grant Save Failed"));
                 }
+            } else {
+                log.error("Order Grant Service Failed ! Requesting and Granting Districts do not belong to same State "
+                        + grantOrder.getGrantingStateName());
+                return Mono.error(new OrderGrantSaveError(
+                        "Order Grant Service Error ! - Requesting and Granting Districts do not belong to same State"));
             }
-            else{
-                log.error("Order Grant Service Failed ! Requesting and Granting Districts do not belong to same State "+grantOrder.getGrantingStateName());
-                return Mono.error(new OrderGrantSaveError("Order Grant Service Error ! - Requesting and Granting Districts do not belong to same State"));
-            }
-        }   
-        else{
-            log.error("Ration Grant Service Failed ! District Name not Found "+grantOrder.getGrantingDistrictName());
-            return Mono.error(new EntityNotFoundException("District "+grantOrder.getGrantingDistrictName()+" or Request ID "+grantOrder.getRequestId()+" Not Found"));
+        } else {
+            log.error("Ration Grant Service Failed ! District Name not Found " + grantOrder.getGrantingDistrictName());
+            return Mono.error(new EntityNotFoundException("District " + grantOrder.getGrantingDistrictName()
+                    + " or Request ID " + grantOrder.getRequestId() + " Not Found"));
 
         }
     }
@@ -151,32 +157,32 @@ public class DistrictManagementServiceImpl implements DistrictManagementService{
     public Mono<RequestStatus> getOrderStatus(String requestId) {
         log.info(String.format("Getting Order Status for Request Id: %s", requestId));
         Optional<RequestStatus> data = Optional.ofNullable(requestStatusRepository.findOneByRequestId(requestId));
-        if(data.isPresent()){
+        if (data.isPresent()) {
             log.info("Order Status Service Completed !");
             return Mono.just(data.get());
-        }
-        else{
+        } else {
             log.error("Order Status Service Failed !");
-            return Mono.error(new EntityNotFoundException("Request Id Not Found "+requestId));
+            return Mono.error(new EntityNotFoundException("Request Id Not Found " + requestId));
         }
     }
 
-    
-    private void updateOrderRequestAndRequestStatusOnGrantOrderNote(OrderGrant orderGrant) {
-        // update order request status
-        // Optional<OrderRequest> orderRequest = Optional.ofNullable(orderRequestRepository.findOneByRequestId(orderGrant.getRequestId()));
-        // if(orderRequest.isPresent()){
-        //     Optional<RequestStatus> requestStatus = Optional.ofNullable(requestStatusRepository.findOneByRequestId(orderGrant.getRequestId()));
-        //     if(requestStatus.isPresent()){
-        //         requestStatus.get().setStatus(OrderRequestStatus.GRANTED);
-        //         requestStatus.get().setQuantity(orderRequest.get().getQuantity());
-        //         requestStatus.get().setRequestedQuantity(orderRequest.get().getQuantity());
-        //         requestStatus.get().setRequestedDate(orderRequest.get().getRequestedDate());
-        //         requestStatus.get().setGrantedDate(orderGrant.getGrantDate());
-        //         requestStatus.get().setGrantAmount(orderGrant.getQuantityGranted());
-        //         requestStatusRepository.save(requestStatus.get());
-        //     }
-        // }
+    private void updateOrderRequestAndRequestStatusOnGrantOrderNote(OrderGrant orderGrant, OrderRequest orderRequest) {
+        // update order request status and orderRequest quantity
+        Optional<RequestStatus> requestStatusOptional = Optional
+                .ofNullable(requestStatusRepository.findOneByRequestId(orderRequest.getId()));
+        RequestStatus requestStatus = requestStatusOptional.get();
+        if (orderRequest.getQuantity().equals(orderGrant.getQuantity())) {
+            orderRequest.setIsActive(false);
+            requestStatus.setStatus(OrderRequestStatus.FULFILLED);
+        } else {
+            requestStatus.setStatus(OrderRequestStatus.PARTIALY_FULFILLED);
+        }
+        Double remainingQuantity = orderRequest.getQuantity() - orderGrant.getQuantity();
+        orderRequest.setQuantity(remainingQuantity);
+        requestStatus.setQuantityFulfilled(orderGrant.getQuantity());
+        requestStatus.setQuantityRemaining(remainingQuantity);
+        orderRequestRepository.save(orderRequest);
+        requestStatusRepository.save(requestStatus);
     }
 
 }
