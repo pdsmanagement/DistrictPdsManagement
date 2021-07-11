@@ -84,16 +84,17 @@ public class DistrictManagementServiceImpl implements DistrictManagementService{
     public Mono<OrderRequest> requestforRation(OrderRequestService orderRequest) {
         log.info(String.format("Requesting Ration for District: %s", orderRequest.getRequestingDistrictName()));
         DistrictInCamelCase = StringUtils.capitalize(orderRequest.getRequestingDistrictName());
-        // get data from database using district name
+        // check district name is present is database or not
         Optional<GovBody> data = Optional.ofNullable(districtRepository.findOneByDistrictName(DistrictInCamelCase));
         if(data.isPresent()){
             // create new order request
             Date date = new Date();
-            OrderRequest orderRequestEntity = new OrderRequest(orderRequest.getRequestingDistrictName(), orderRequest.getRawMaterialName(), orderRequest.getQuantity(), orderRequest.getUnits(), true, date, date);
+            OrderRequest orderRequestEntity = new OrderRequest(orderRequest.getRequestingStateName(), orderRequest.getRawMaterialName(), orderRequest.getQuantity(), orderRequest.getUnits(), true, date, date, orderRequest.getRequestingDistrictName());
             // save new order request
             Optional<OrderRequest> dbRes = Optional.ofNullable(orderRequestRepository.save(orderRequestEntity));
             if(dbRes.isPresent()){
                 log.info("Ration Request Service Completed !");
+                // update request status to pending
                 requestStatusRepository.save(new RequestStatus(dbRes.get().getId(), OrderRequestStatus.PENDING,0.0, dbRes.get().getQuantity()));
                 return Mono.just(dbRes.get());
             }
@@ -117,7 +118,7 @@ public class DistrictManagementServiceImpl implements DistrictManagementService{
         if(data.isPresent()){
             // create new order grant
             Date date = new Date();
-            OrderGrant orderGrantEntity = new OrderGrant(grantOrder.getGrantingDistrictName() , grantOrder.getRequestId(), grantOrder.getQuantityGranted(), date, date);
+            OrderGrant orderGrantEntity = new OrderGrant(grantOrder.getGrantingStateName() , grantOrder.getRequestId(), grantOrder.getQuantityGranted(), date, date, grantOrder.getGrantingDistrictName());
             // save new order grant
             Optional<OrderGrant> dbRes = Optional.ofNullable(orderGrantRepository.save(orderGrantEntity));
             if(dbRes.isPresent()){
