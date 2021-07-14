@@ -19,6 +19,8 @@ public class GovBody {
 	private String districtName;
 	@Schema(description = "Name of State")
 	private String stateName;
+	@Schema(description = "Indicator to determine if Entity is State or District")
+	private Boolean isStateIndicator;
 	@Schema(description = "Point of Contact for the Government Body/ SPOC")
 	private Meta metaData;
 	@Schema(description = "Total Capacity of the State/ District to hold Rations")
@@ -31,12 +33,13 @@ public class GovBody {
 	}
 
 	//consructor without id
-	public GovBody(String stateName, Meta metaData, Double capacity, String districtName) {
+	public GovBody(String stateName, Meta metaData, Double capacity, String districtName, Boolean isStateIndicator) {
 		super();
 		this.stateName = stateName;
 		this.metaData = metaData;
 		this.capacity = capacity;
 		this.districtName = districtName;
+		this.isStateIndicator = isStateIndicator;
 	}
 
 }

@@ -8,7 +8,9 @@ spec:
     ports:
         - port: 8282
           targetPort: 8282
-    type: LoadBalancer
+          nodePort : 30035
+          protocol: TCP
+    type: NodePort
 ---
 apiVersion: apps/v1
 kind: Deployment
