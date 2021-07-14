@@ -49,13 +49,16 @@ public class DistrictManagementServiceImpl implements DistrictManagementService 
 
     private static String DistrictInCamelCase = "";
 
+    private static Boolean isStateIndicator = false;
+
     @Override
     public Mono<GovBodyRawMaterialAvailability> getRationAvailability(String districtName) {
         // get data from database using district name
         log.info(String.format("Getting Ration Availability for District: %s", districtName));
         DistrictInCamelCase = StringUtils.capitalize(districtName);
+        isStateIndicator = false;
         Optional<GovBodyRawMaterialAvailability> data = Optional
-                .ofNullable(districtAvailabilityRepository.findOneByDistrictName(DistrictInCamelCase));
+                .ofNullable(districtAvailabilityRepository.findGovBodyByStateNameAndIsStateIndicator(DistrictInCamelCase, isStateIndicator));
         if (data.isPresent()) {
             log.info("Ration Availability Service Completed !");
             return Mono.just(data.get());
@@ -69,7 +72,8 @@ public class DistrictManagementServiceImpl implements DistrictManagementService 
     public Mono<GovBody> getDistrictCapacity(String districtName) {
         log.info(String.format("Getting Ration Capacity for District: %s", districtName));
         DistrictInCamelCase = StringUtils.capitalize(districtName);
-        Optional<GovBody> data = Optional.ofNullable(districtRepository.findOneByDistrictName(DistrictInCamelCase));
+        isStateIndicator = false;
+        Optional<GovBody> data = Optional.ofNullable(districtRepository.findGovBodyByStateNameAndIsStateIndicator(DistrictInCamelCase, isStateIndicator));
         if (data.isPresent()) {
             log.info("Ration Capacity of District Service Completed !");
             return Mono.just(data.get());
@@ -83,6 +87,7 @@ public class DistrictManagementServiceImpl implements DistrictManagementService 
     public Mono<OrderRequest> requestforRation(OrderRequestService orderRequest) {
         log.info(String.format("Requesting Ration for District: %s", orderRequest.getRequestingDistrictName()));
         DistrictInCamelCase = StringUtils.capitalize(orderRequest.getRequestingDistrictName());
+        isStateIndicator = false;
         // check district name is present is database or not
         Optional<GovBody> data = Optional.ofNullable(districtRepository.findOneByDistrictName(DistrictInCamelCase));
         if (data.isPresent()) {
@@ -90,7 +95,7 @@ public class DistrictManagementServiceImpl implements DistrictManagementService 
             Date date = new Date();
             OrderRequest orderRequestEntity = new OrderRequest(orderRequest.getRequestingStateName(),
                     orderRequest.getRawMaterialName(), orderRequest.getQuantity(), orderRequest.getUnits(), true, date,
-                    date, orderRequest.getRequestingDistrictName());
+                    date, orderRequest.getRequestingDistrictName(), isStateIndicator);
             // save new order request
             Optional<OrderRequest> dbRes = Optional.ofNullable(orderRequestRepository.save(orderRequestEntity));
             if (dbRes.isPresent()) {
@@ -116,6 +121,7 @@ public class DistrictManagementServiceImpl implements DistrictManagementService 
     public Mono<OrderGrant> grantOrderNote(OrderGrantService grantOrder) {
         log.info(String.format("Granting Order Note for District: %s", grantOrder.getGrantingDistrictName()));
         DistrictInCamelCase = StringUtils.capitalize(grantOrder.getGrantingDistrictName());
+        isStateIndicator = false;
         // check district name is present is database or not
         Optional<GovBody> data = Optional.ofNullable(districtRepository.findOneByDistrictName(DistrictInCamelCase));
         // check if request is present in database
@@ -128,7 +134,7 @@ public class DistrictManagementServiceImpl implements DistrictManagementService 
                 Date date = new Date();
                 OrderGrant orderGrantEntity = new OrderGrant(grantOrder.getGrantingStateName(),
                         grantOrder.getRequestId(), grantOrder.getQuantityGranted(), date, date,
-                        grantOrder.getGrantingDistrictName());
+                        grantOrder.getGrantingDistrictName(), isStateIndicator);
                 // save new order grant
                 Optional<OrderGrant> dbRes = Optional.ofNullable(orderGrantRepository.save(orderGrantEntity));
                 if (dbRes.isPresent()) {

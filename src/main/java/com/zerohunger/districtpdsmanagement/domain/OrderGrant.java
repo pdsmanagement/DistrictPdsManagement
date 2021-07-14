@@ -19,6 +19,7 @@ public class OrderGrant {
 	private String grantingStateName;
 	private String requestId;
 	private Double quantity;
+	private Boolean isStateIndicator;
 	
 	//@CreatedDate
 	private Date createdOn;
@@ -36,7 +37,7 @@ public class OrderGrant {
 	}
 
 	//constructor using all fields
-	public OrderGrant(String grantingStateName, String requestId, Double quantity, Date createdOn, Date modifiedOn, String grantingDistrictName) {	
+	public OrderGrant(String grantingStateName, String requestId, Double quantity, Date createdOn, Date modifiedOn, String grantingDistrictName, Boolean isStateIndicator) {	
 		super();
 		this.grantingStateName = grantingStateName;
 		this.requestId = requestId;
@@ -44,6 +45,7 @@ public class OrderGrant {
 		this.createdOn = createdOn;
 		this.modifiedOn = modifiedOn;
 		this.grantingDistrictName = grantingDistrictName;
+		this.isStateIndicator = isStateIndicator;
 	}
 	
 }

@@ -21,6 +21,8 @@ public class GovBodyRawMaterialAvailability {
 	private String districtName;
 	@Schema(description = "Name of State")
 	private String stateName;
+	@Schema(description = "Indicator to determine if Entity is State or District")
+	private Boolean isStateIndicator;
 	@Schema(description = "Availability of Ration Name along with Quantity")
 	private List<RawMaterialAvailability> availability;
 	public GovBodyRawMaterialAvailability(String stateName, List<RawMaterialAvailability> availability) {
@@ -30,11 +32,12 @@ public class GovBodyRawMaterialAvailability {
 	}
 
 	//constructor without id
-	public GovBodyRawMaterialAvailability(String stateName, List<RawMaterialAvailability> availability, String districtName) {
+	public GovBodyRawMaterialAvailability(String stateName, List<RawMaterialAvailability> availability, String districtName, Boolean isStateIndicator) {
 		super();
 		this.stateName = stateName;
 		this.availability = availability;
 		this.districtName = districtName;
+		this.isStateIndicator = isStateIndicator;
 	}
 	
 }
