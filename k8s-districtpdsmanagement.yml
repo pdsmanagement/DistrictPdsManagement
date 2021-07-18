@@ -30,6 +30,6 @@ spec:
     spec:
       containers:
         - name: k8s-districtpdsmanagement
-          image: gswain3316/districtpdsmanagement:0.0.1-SNAPSHOT
+          image: gswain3316/districtpdsmanagement:latest
           ports:
             - containerPort: 8282
